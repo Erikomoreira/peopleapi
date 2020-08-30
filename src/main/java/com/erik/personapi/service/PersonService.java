@@ -3,6 +3,7 @@ package com.erik.personapi.service;
 import com.erik.personapi.dto.request.PersonDTO;
 import com.erik.personapi.dto.response.MessageResponseDTO;
 import com.erik.personapi.entity.Person;
+import com.erik.personapi.exeception.PersonNotFoundException;
 import com.erik.personapi.mapper.PersonMapper;
 import com.erik.personapi.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +32,16 @@ public class PersonService {
                 .build();
     }
 
-    //Aula 9
     public List<PersonDTO> listAll() {
         List<Person> allPeople = personRepository.findAll();
         return allPeople.stream()
                 .map(personMapper::toDTO)
                 .collect(Collectors.toList());
-        }
+    }
+
+    public PersonDTO findById(Long id) throws PersonNotFoundException {
+       Person person = personRepository.findById(id)
+                .orElseThrow(() ->  new PersonNotFoundException(id));
+        return personMapper.toDTO(person);
+    }
 }
